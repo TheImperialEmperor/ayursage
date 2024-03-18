@@ -1,6 +1,8 @@
+import 'package:ayursage/src/authentication/controllers/otp_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:get/get.dart';
 
 class OTPScreen extends StatelessWidget {
   const OTPScreen({super.key});
@@ -8,6 +10,8 @@ class OTPScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Replace this with your main screen widget
+    var otpController = Get.put(OTPController());
+    var otp;
     return Scaffold(
         body: Container(
       padding: const EdgeInsets.all(30.0),
@@ -41,13 +45,25 @@ class OTPScreen extends StatelessWidget {
             fillColor: Colors.black.withOpacity(0.1),
             filled: true,
             keyboardType: TextInputType.number,
-            onSubmit: (code){if (kDebugMode) {
-              print('OTP is => $code');
-            }},
+            onSubmit: (code) {
+              if (kDebugMode) {
+                otp = code;
+                OTPController.instance.verifyOTP(otp);
+              }
+            },
           ),
-          const SizedBox(height: 20.0,),
-          SizedBox(width: double.infinity,
-          child: ElevatedButton(onPressed: (){},child: const Text('Next'),),)
+          const SizedBox(
+            height: 20.0,
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                OTPController.instance.verifyOTP(otp);
+              },
+              child: const Text('Next'),
+            ),
+          )
         ],
       ),
     ));

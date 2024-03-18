@@ -1,4 +1,5 @@
 import 'package:ayursage/src/authentication/screens/signup.dart';
+import 'package:ayursage/src/home_screens/guest_home.dart';
 import 'package:flutter/material.dart';
 
 import '../../home.dart';
@@ -338,7 +339,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
-                    // Implement login as guest logic
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const GuestHome()),
+                    );
                   },
                   child: const Text(
                     'Login as Guest!',
