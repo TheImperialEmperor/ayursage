@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class GettingStartedScreen extends StatefulWidget {
-  const GettingStartedScreen({Key? key});
+// State management using Riverpod
+final selectedGroupProvider = StateProvider<String>((ref) => '');
+final showDetailsProvider = StateProvider<bool>((ref) => false);
 
-  @override
-  _GettingStartedScreenState createState() => _GettingStartedScreenState();
-}
-
-class _GettingStartedScreenState extends State<GettingStartedScreen> {
-  String selectedGroup = '';
-  bool showDetails = false;
+class GettingStartedScreen extends ConsumerWidget {
+  const GettingStartedScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedGroup = ref.watch(selectedGroupProvider);
+    final showDetails = ref.watch(showDetailsProvider);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -45,31 +45,39 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // Wrap the first two cards in a Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  buildGroupCard(
-                    'Doctor',
-                    'girldoc',
-                    Colors.white,
-                    'doctorGroup',
-                    'doctorCheck',
+                  Expanded(
+                    child: buildGroupCard(
+                      context,
+                      ref,
+                      'Doctor',
+                      'doctor',
+                      Colors.white,
+                    ),
                   ),
-                  buildGroupCard(
-                    'Student',
-                    'student',
-                    Colors.white,
-                    'studentGroup',
-                    'studentCheck',
-                  ),
-                  buildGroupCard(
-                    'Guest',
-                    'person',
-                    Colors.white,
-                    'patientGroup',
-                    'patientCheck',
+                  const SizedBox(width: 10), // Space between cards
+                  Expanded(
+                    child: buildGroupCard(
+                      context,
+                      ref,
+                      'Student',
+                      'student',
+                      Colors.white,
+                    ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              // Add the Guest card below the Row
+              buildGroupCard(
+                context,
+                ref,
+                'Guest',
+                'user',
+                Colors.white,
               ),
               const SizedBox(height: 20),
               Visibility(
@@ -78,13 +86,15 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: selectedGroup.isNotEmpty ? () {
                   // Handle proceed button click
-                },
+                } : null, // Disable button if no card is selected
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightGreen,
+                  backgroundColor: selectedGroup.isNotEmpty ? Colors.lightGreen : Colors.grey, // Change color based on selection
                   padding: const EdgeInsets.symmetric(
-                      vertical: 15, horizontal: 20),
+                    vertical: 15,
+                    horizontal: 20,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -107,26 +117,34 @@ class _GettingStartedScreenState extends State<GettingStartedScreen> {
   }
 
   Widget buildGroupCard(
+      BuildContext context,
+      WidgetRef ref,
       String title,
       String image,
       Color backgroundColor,
-      String groupId,
-      String checkId,
       ) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedGroup = title;
-          showDetails = true;
-        });
-      },
-      child: MaterialCard(
-        backgroundColor: backgroundColor,
-        groupId: groupId,
-        checkId: checkId,
-        title: title,
-        image: image,
-        isSelected: selectedGroup == title,
+    final selectedGroup = ref.watch(selectedGroupProvider);
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0), // Add padding here
+      child: GestureDetector(
+        onTap: () {
+          if (selectedGroup == title) {
+            // Deselect if the same card is clicked again
+            ref.read(selectedGroupProvider.notifier).state = "";
+            ref.read(showDetailsProvider.notifier).state = false;
+          } else {
+            // Select the card and show details
+            ref.read(selectedGroupProvider.notifier).state = title;
+            ref.read(showDetailsProvider.notifier).state = true;
+          }
+        },
+        child: MaterialCard(
+          backgroundColor: backgroundColor,
+          title: title,
+          image: image,
+          isSelected: selectedGroup == title,
+        ),
       ),
     );
   }
@@ -149,18 +167,15 @@ class MaterialCard extends StatelessWidget {
   final String title;
   final String image;
   final Color backgroundColor;
-  final String groupId;
-  final String checkId;
   final bool isSelected;
 
-  MaterialCard({
+  const MaterialCard({
     required this.title,
     required this.image,
     required this.backgroundColor,
-    required this.groupId,
-    required this.checkId,
     required this.isSelected,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -168,33 +183,42 @@ class MaterialCard extends StatelessWidget {
       elevation: 4,
       color: isSelected ? Colors.grey : backgroundColor,
       borderRadius: BorderRadius.circular(25),
-      child: Column(
-        children: [
-          const SizedBox(height: 30),
-          Image.asset(
-            'assets/images/gettingStarted/check.png',
-            width: 20,
-            height: 20,
-            color: isSelected ? Colors.blue : Colors.transparent,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(
-              fontFamily: 'red_hat',
-              color: Colors.black,
-              fontSize: 20,
+      child: Padding( // Added Padding widget here
+        padding: const EdgeInsets.all(16.0), // Adjust padding as needed
+        child: Column(
+          children: [
+            const SizedBox(height: 30),
+            Image.asset(
+              'assets/images/gettingStarted/check.png',
+              width: 20,
+              height: 20,
+              color: isSelected ? Colors.blue : Colors.transparent,
             ),
-          ),
-          const SizedBox(height: 30),
-        ],
+            const SizedBox(height: 10),
+            Image.asset(
+              'assets/images/gettingStarted/$image.png',
+              width: 100,
+              height: 100,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: const TextStyle(
+                fontFamily: 'red_hat',
+                color: Colors.black,
+                fontSize: 20,
+              ),
+            ),
+            const SizedBox(height: 30),
+          ],
+        ),
       ),
     );
   }
 }
 
 class DoctorDetailsForm extends StatelessWidget {
-  const DoctorDetailsForm({Key? key});
+  const DoctorDetailsForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +274,7 @@ class DoctorDetailsForm extends StatelessWidget {
 }
 
 class StudentDetailsForm extends StatelessWidget {
-  const StudentDetailsForm({Key? key});
+  const StudentDetailsForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +330,7 @@ class StudentDetailsForm extends StatelessWidget {
 }
 
 class GuestDetailsForm extends StatelessWidget {
-  const GuestDetailsForm({Key? key});
+  const GuestDetailsForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -4,8 +4,9 @@ class GuestHome extends StatefulWidget {
   const GuestHome({Key? key}) : super(key: key);
 
   @override
-  _GuestHomeState createState() => _GuestHomeState();
-}
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
+  }
 
-class _GuestHomeState {
 }
