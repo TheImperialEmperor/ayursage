@@ -156,7 +156,7 @@ class GettingStartedScreen extends ConsumerWidget {
       case 'Student':
         return const StudentDetailsForm();
       case 'Guest':
-        return const GuestDetailsForm();
+        return const PatientDetailsForm();
       default:
         return Container();
     }
@@ -329,16 +329,32 @@ class StudentDetailsForm extends StatelessWidget {
   }
 }
 
-class GuestDetailsForm extends StatelessWidget {
-  const GuestDetailsForm({Key? key}) : super(key: key);
+class PatientDetailsForm extends StatefulWidget {
+  const PatientDetailsForm({Key? key}) : super(key: key);
+
+  @override
+  _PatientDetailsFormState createState() => _PatientDetailsFormState();
+}
+
+class _PatientDetailsFormState extends State<PatientDetailsForm> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _aadhaarController = TextEditingController();
+
+  String _selectedBloodGroup = 'Select Blood Group';
+  String _selectedGender = 'Select Gender';
+  DateTime? _selectedDate;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // First Name
         TextFormField(
+          controller: _firstNameController,
           decoration: const InputDecoration(
-            labelText: 'Enter your Aadhaar number',
+            labelText: 'First Name',
             labelStyle: TextStyle(
               fontFamily: 'red_hat',
               fontSize: 20,
@@ -347,9 +363,12 @@ class GuestDetailsForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
+
+        // Last Name
         TextFormField(
+          controller: _lastNameController,
           decoration: const InputDecoration(
-            labelText: 'Select your blood group',
+            labelText: 'Last Name',
             labelStyle: TextStyle(
               fontFamily: 'red_hat',
               fontSize: 20,
@@ -358,20 +377,12 @@ class GuestDetailsForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
+
+        // Phone Number
         TextFormField(
+          controller: _phoneNumberController,
           decoration: const InputDecoration(
-            labelText: 'Select your birth date',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Enter your phone no.',
+            labelText: 'Phone Number',
             labelStyle: TextStyle(
               fontFamily: 'red_hat',
               fontSize: 20,
@@ -380,7 +391,115 @@ class GuestDetailsForm extends StatelessWidget {
           ),
           keyboardType: TextInputType.phone,
         ),
+        const SizedBox(height: 20),
+
+        // Aadhaar Number
+        TextFormField(
+          controller: _aadhaarController,
+          decoration: const InputDecoration(
+            labelText: 'Aadhaar Number',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Blood Group Dropdown
+        DropdownButtonFormField<String>(
+          value: _selectedBloodGroup,
+          items: const [
+            DropdownMenuItem(value: 'Select Blood Group', child: Text('Select Blood Group')),
+            DropdownMenuItem(value: 'A+', child: Text('A+')),
+            DropdownMenuItem(value: 'A-', child: Text('A-')),
+            DropdownMenuItem(value: 'B+', child: Text('B+')),
+            DropdownMenuItem(value: 'B-', child: Text('B-')),
+            DropdownMenuItem(value: 'O+', child: Text('O+')),
+            DropdownMenuItem(value: 'O-', child: Text('O-')),
+            DropdownMenuItem(value: 'AB+', child: Text('AB+')),
+            DropdownMenuItem(value: 'AB-', child: Text('AB-')),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedBloodGroup = value!;
+            });
+          },
+          decoration: const InputDecoration(
+            labelText: 'Blood Group',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Date of Birth Date Picker
+        GestureDetector(
+          onTap: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            );
+            if (pickedDate != null) {
+              setState(() {
+                _selectedDate = pickedDate;
+              });
+            }
+          },
+          child: InputDecorator(
+            decoration: const InputDecoration(
+              labelText: 'Date of Birth',
+              labelStyle: TextStyle(
+                fontFamily: 'red_hat',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            child: Text(
+              _selectedDate == null
+                  ? 'Select Date'
+                  : "${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}",
+              style: const TextStyle(
+                fontFamily: 'red_hat',
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Gender Dropdown
+        DropdownButtonFormField<String>(
+          value: _selectedGender,
+          items: const [
+            DropdownMenuItem(value: 'Select Gender', child: Text('Select Gender')),
+            DropdownMenuItem(value: 'Male', child: Text('Male')),
+            DropdownMenuItem(value: 'Female', child: Text('Female')),
+            DropdownMenuItem(value: 'Other', child: Text('Other')),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedGender = value!;
+            });
+          },
+          decoration: const InputDecoration(
+            labelText: 'Gender',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
       ],
     );
   }
 }
+

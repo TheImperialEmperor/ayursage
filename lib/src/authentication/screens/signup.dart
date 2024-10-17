@@ -2,6 +2,7 @@ import 'package:ayursage/src/authentication/controllers/signup_controller.dart';
 import 'package:ayursage/src/authentication/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../profile/getting_started.dart';
 import '../../utils/constants.dart';
@@ -18,6 +19,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Future<void> _saveCredentials(String email, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+    await prefs.setString('password', password);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,9 +165,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       SignUpController.instance.registerUser(controller.email.text.trim(), controller.password.text.trim());
+                      await _saveCredentials(
+                      controller.email.text.trim(),
+                      controller.password.text.trim(),
+                      );
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
