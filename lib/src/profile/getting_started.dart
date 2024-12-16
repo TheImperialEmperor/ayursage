@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../authentication/controllers/getting_started_controller.dart';
 
 // State management using Riverpod
 final selectedGroupProvider = StateProvider<String>((ref) => '');
@@ -10,9 +14,10 @@ class GettingStartedScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final controller = Get.put(GettingStartedController());
     final selectedGroup = ref.watch(selectedGroupProvider);
     final showDetails = ref.watch(showDetailsProvider);
-
+    final gettingStartedController = Get.put(GettingStartedController());
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -87,7 +92,13 @@ class GettingStartedScreen extends ConsumerWidget {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: selectedGroup.isNotEmpty ? () {
-                  // Handle proceed button click
+                  if (selectedGroup == 'Doctor') {
+                    gettingStartedController.uploadDetailsToFirebase(0);
+                  } else if (selectedGroup == 'Student') {
+                    gettingStartedController.uploadDetailsToFirebase(1);
+                  } else if (selectedGroup == 'Guest') {
+                    gettingStartedController.uploadDetailsToFirebase(2);
+                  }
                 } : null, // Disable button if no card is selected
                 style: ElevatedButton.styleFrom(
                   backgroundColor: selectedGroup.isNotEmpty ? Colors.lightGreen : Colors.grey, // Change color based on selection
@@ -124,6 +135,7 @@ class GettingStartedScreen extends ConsumerWidget {
       Color backgroundColor,
       ) {
     final selectedGroup = ref.watch(selectedGroupProvider);
+    final gettingStartedController = Get.find<GettingStartedController>();
 
     return Padding(
       padding: const EdgeInsets.all(8.0), // Add padding here
@@ -133,10 +145,12 @@ class GettingStartedScreen extends ConsumerWidget {
             // Deselect if the same card is clicked again
             ref.read(selectedGroupProvider.notifier).state = "";
             ref.read(showDetailsProvider.notifier).state = false;
+            gettingStartedController.updateSelectedGroup(""); // Notify controller
           } else {
             // Select the card and show details
             ref.read(selectedGroupProvider.notifier).state = title;
             ref.read(showDetailsProvider.notifier).state = true;
+            gettingStartedController.updateSelectedGroup(title); // Notify controller
           }
         },
         child: MaterialCard(
@@ -149,12 +163,13 @@ class GettingStartedScreen extends ConsumerWidget {
     );
   }
 
+
   Widget buildDetailsForm(String selectedGroup) {
     switch (selectedGroup) {
       case 'Doctor':
-        return const DoctorDetailsForm();
+        return DoctorDetailsForm();
       case 'Student':
-        return const StudentDetailsForm();
+        return StudentDetailsForm();
       case 'Guest':
         return const PatientDetailsForm();
       default:
@@ -217,72 +232,31 @@ class MaterialCard extends StatelessWidget {
   }
 }
 
-class DoctorDetailsForm extends StatelessWidget {
+class DoctorDetailsForm extends StatefulWidget {
   const DoctorDetailsForm({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Enter your registration no.',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Enter your institution name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Select your qualification',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Enter your phone no.',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          keyboardType: TextInputType.phone,
-        ),
-      ],
-    );
-  }
+  _DoctorDetailsFormState createState() => _DoctorDetailsFormState();
 }
 
-class StudentDetailsForm extends StatelessWidget {
-  const StudentDetailsForm({Key? key}) : super(key: key);
+class _DoctorDetailsFormState extends State<DoctorDetailsForm> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _registrationNumberController = TextEditingController();
+  final TextEditingController _instituteNameController = TextEditingController();
+
+  String _selectedQualification = 'Select Qualification';
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        // First Name
         TextFormField(
+          controller: _firstNameController,
           decoration: const InputDecoration(
-            labelText: 'Enter your college ID',
+            labelText: 'First Name',
             labelStyle: TextStyle(
               fontFamily: 'red_hat',
               fontSize: 20,
@@ -291,9 +265,12 @@ class StudentDetailsForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
+
+        // Last Name
         TextFormField(
+          controller: _lastNameController,
           decoration: const InputDecoration(
-            labelText: 'Enter your college name',
+            labelText: 'Last Name',
             labelStyle: TextStyle(
               fontFamily: 'red_hat',
               fontSize: 20,
@@ -302,20 +279,12 @@ class StudentDetailsForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
+
+        // Phone Number
         TextFormField(
+          controller: _phoneNumberController,
           decoration: const InputDecoration(
-            labelText: 'What are you pursuing?',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-        TextFormField(
-          decoration: const InputDecoration(
-            labelText: 'Enter your phone no.',
+            labelText: 'Phone Number',
             labelStyle: TextStyle(
               fontFamily: 'red_hat',
               fontSize: 20,
@@ -324,10 +293,188 @@ class StudentDetailsForm extends StatelessWidget {
           ),
           keyboardType: TextInputType.phone,
         ),
+        const SizedBox(height: 20),
+
+        // Registration Number
+        TextFormField(
+          controller: _registrationNumberController,
+          decoration: const InputDecoration(
+            labelText: 'Registration Number',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Institute Name
+        TextFormField(
+          controller: _instituteNameController,
+          decoration: const InputDecoration(
+            labelText: 'Institution Name',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Qualification Dropdown
+        DropdownButtonFormField<String>(
+          value: _selectedQualification,
+          items: const [
+            DropdownMenuItem(value: 'Select Qualification', child: Text('Select Qualification')),
+            DropdownMenuItem(value: 'MBBS', child: Text('MBBS')),
+            DropdownMenuItem(value: 'MD', child: Text('MD')),
+            DropdownMenuItem(value: 'DO', child: Text('DO')),
+            DropdownMenuItem(value: 'Other', child: Text('Other')),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedQualification = value!;
+            });
+          },
+          decoration: const InputDecoration(
+            labelText: 'Qualification',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
       ],
     );
   }
 }
+
+
+class StudentDetailsForm extends StatefulWidget {
+  const StudentDetailsForm({Key? key}) : super(key: key);
+
+  @override
+  _StudentDetailsFormState createState() => _StudentDetailsFormState();
+}
+
+class _StudentDetailsFormState extends State<StudentDetailsForm> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _collegeIdController = TextEditingController();
+  final TextEditingController _collegeNameController = TextEditingController();
+
+  String _selectedPursuing = 'Select Program';
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // First Name
+        TextFormField(
+          controller: _firstNameController,
+          decoration: const InputDecoration(
+            labelText: 'First Name',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Last Name
+        TextFormField(
+          controller: _lastNameController,
+          decoration: const InputDecoration(
+            labelText: 'Last Name',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Phone Number
+        TextFormField(
+          controller: _phoneNumberController,
+          decoration: const InputDecoration(
+            labelText: 'Phone Number',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          keyboardType: TextInputType.phone,
+        ),
+        const SizedBox(height: 20),
+
+        // College ID
+        TextFormField(
+          controller: _collegeIdController,
+          decoration: const InputDecoration(
+            labelText: 'College ID',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // College Name
+        TextFormField(
+          controller: _collegeNameController,
+          decoration: const InputDecoration(
+            labelText: 'College Name',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Pursuing Dropdown
+        DropdownButtonFormField<String>(
+          value: _selectedPursuing,
+          items: const [
+            DropdownMenuItem(value: 'Select Program', child: Text('Select Program')),
+            DropdownMenuItem(value: '', child: Text('Undergraduate')),
+            DropdownMenuItem(value: 'Postgraduate', child: Text('Postgraduate')),
+            DropdownMenuItem(value: 'Diploma', child: Text('Diploma')),
+            DropdownMenuItem(value: 'Other', child: Text('Other')),
+          ],
+          onChanged: (value) {
+            setState(() {
+              _selectedPursuing = value!;
+            });
+          },
+          decoration: const InputDecoration(
+            labelText: 'Pursuing',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+}
+
 
 class PatientDetailsForm extends StatefulWidget {
   const PatientDetailsForm({Key? key}) : super(key: key);
@@ -344,7 +491,7 @@ class _PatientDetailsFormState extends State<PatientDetailsForm> {
 
   String _selectedBloodGroup = 'Select Blood Group';
   String _selectedGender = 'Select Gender';
-  DateTime? _selectedDate;
+  final TextEditingController _dateOfBirthController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -407,6 +554,36 @@ class _PatientDetailsFormState extends State<PatientDetailsForm> {
         ),
         const SizedBox(height: 20),
 
+        // Date of Birth with DatePicker
+        TextFormField(
+          controller: _dateOfBirthController,
+          readOnly: true,
+          decoration: const InputDecoration(
+            labelText: 'Date of Birth',
+            labelStyle: TextStyle(
+              fontFamily: 'red_hat',
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+            suffixIcon: Icon(Icons.calendar_today),
+          ),
+          onTap: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            );
+            if (pickedDate != null) {
+              setState(() {
+                _dateOfBirthController.text =
+                "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+              });
+            }
+          },
+        ),
+        const SizedBox(height: 20),
+
         // Blood Group Dropdown
         DropdownButtonFormField<String>(
           value: _selectedBloodGroup,
@@ -432,43 +609,6 @@ class _PatientDetailsFormState extends State<PatientDetailsForm> {
               fontFamily: 'red_hat',
               fontSize: 20,
               fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-
-        // Date of Birth Date Picker
-        GestureDetector(
-          onTap: () async {
-            DateTime? pickedDate = await showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now(),
-            );
-            if (pickedDate != null) {
-              setState(() {
-                _selectedDate = pickedDate;
-              });
-            }
-          },
-          child: InputDecorator(
-            decoration: const InputDecoration(
-              labelText: 'Date of Birth',
-              labelStyle: TextStyle(
-                fontFamily: 'red_hat',
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            child: Text(
-              _selectedDate == null
-                  ? 'Select Date'
-                  : "${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}",
-              style: const TextStyle(
-                fontFamily: 'red_hat',
-                fontSize: 20,
-              ),
             ),
           ),
         ),

@@ -12,6 +12,12 @@ class GettingStartedController extends GetxController {
   static GettingStartedController get instance => Get.find();
 
   RxInt userType = (-1).obs; // Tracks user type selection (0: Doctor, 1: Student, 2: Patient)
+  RxString selectedGroup = ''.obs;
+
+  void updateSelectedGroup(String group) {
+    selectedGroup.value = group;
+    print("Selected group updated to: $group");
+  }
 
   // Common fields
   final firstNameController = TextEditingController();
@@ -42,21 +48,36 @@ class GettingStartedController extends GetxController {
   }
 
   // Method to upload based on the user type
-  void uploadDetailsToFirebase() {
-    switch (userType.value) {
-      case 0: // Doctor
-        _uploadDoctorDetails();
-        break;
-      case 1: // Student
-        _uploadStudentDetails();
-        break;
-      case 2: // Patient
-        _uploadPatientDetails();
-        break;
-      default:
+  void uploadDetailsToFirebase(value) async {
+    try {
+      if (userType.value == -1) {
         Get.snackbar('Error', 'Please select a user type');
+        return;
+      }
+
+      Get.snackbar('Processing', 'Uploading details...');
+      await uploadDetailsBasedOnType(value);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to upload details: $e');
     }
   }
+
+  Future<void> uploadDetailsBasedOnType(int value) async {
+    switch (value) {
+      case 0: // Doctor
+        await _uploadDoctorDetails();
+        break;
+      case 1: // Student
+        await _uploadStudentDetails();
+        break;
+      case 2: // Patient
+        await _uploadPatientDetails();
+        break;
+      default:
+        throw Exception('Invalid user type');
+    }
+  }
+
 
   // Upload doctor details using Doctor model
   Future<void> _uploadDoctorDetails() async {
@@ -78,7 +99,6 @@ class GettingStartedController extends GetxController {
         registrationNumber: registrationNumberController.text.trim(),
         email: email,
       );
-
       // Upload doctor details using the repository
       await DatabaseRepository.instance.uploadDoctorDetails(doctor);
 

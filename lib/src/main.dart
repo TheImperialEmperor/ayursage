@@ -1,4 +1,5 @@
 import 'package:ayursage/firebase_options.dart';
+import 'package:ayursage/src/authentication/screens/login.dart';
 import 'package:ayursage/src/profile/getting_started.dart';
 import 'package:ayursage/src/repository/auth_repository/authentication_repository.dart';
 import 'package:ayursage/src/utils//splash_screen.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       ),
       //darkTheme: ThemeData(brightness: Brightness.dark),
       //themeMode: ThemeMode.system,
-      home: const GettingStartedScreen(),
+      home: const LoginScreen(),
     );
   }
 }
