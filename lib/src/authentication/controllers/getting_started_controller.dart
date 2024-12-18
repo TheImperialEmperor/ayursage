@@ -25,16 +25,17 @@ class GettingStartedController extends GetxController {
   final phoneController = TextEditingController();
 
   // Doctor-specific fields
-  final instituteNameController = TextEditingController();
+  final hospitalNameController = TextEditingController();
   final qualificationLevelController = TextEditingController();
   final registrationNumberController = TextEditingController();
 
   // Student-specific fields
+  final instituteNameController = TextEditingController();
   final collegeIdController = TextEditingController();
   final degreeController = TextEditingController();
 
   // Patient-specific fields
-  final aadharNumberController = TextEditingController();
+  final aadhaarNumberController = TextEditingController();
   final bloodGroupController = TextEditingController(); // Dropdown value
   final dateOfBirthController = TextEditingController(); // Date picker value
   final genderController = TextEditingController(); // Dropdown value
@@ -94,7 +95,7 @@ class GettingStartedController extends GetxController {
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
         phoneNumber: phoneController.text.trim(),
-        instituteName: instituteNameController.text.trim(),
+        hospitalName: hospitalNameController.text.trim(),
         qualificationLevel: qualificationLevelController.text.trim(),
         registrationNumber: registrationNumberController.text.trim(),
         email: email,
@@ -153,7 +154,7 @@ class GettingStartedController extends GetxController {
         firstName: firstNameController.text.trim(),
         lastName: lastNameController.text.trim(),
         phoneNumber: phoneController.text.trim(),
-        aadharNumber: aadharNumberController.text.trim(),
+        aadhaarNumber: aadhaarNumberController.text.trim(),
         bloodGroup: bloodGroupController.text.trim(),
         dateOfBirth: dateOfBirthController.text.trim(),
         gender: genderController.text.trim(),
@@ -175,12 +176,13 @@ class GettingStartedController extends GetxController {
     firstNameController.dispose();
     lastNameController.dispose();
     phoneController.dispose();
-    instituteNameController.dispose();
+    hospitalNameController.dispose();
     qualificationLevelController.dispose();
     registrationNumberController.dispose();
+    instituteNameController.dispose();
     collegeIdController.dispose();
     degreeController.dispose();
-    aadharNumberController.dispose();
+    aadhaarNumberController.dispose();
     bloodGroupController.dispose();
     dateOfBirthController.dispose();
     genderController.dispose();

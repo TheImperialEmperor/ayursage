@@ -3,7 +3,7 @@ class Doctor {
   final String firstName;
   final String lastName;
   final String phoneNumber;
-  final String instituteName;
+  final String hospitalName;
   final String qualificationLevel;
   final String registrationNumber;
   final String email;
@@ -12,7 +12,7 @@ class Doctor {
     required this.firstName,
     required this.lastName,
     required this.phoneNumber,
-    required this.instituteName,
+    required this.hospitalName,
     required this.qualificationLevel,
     required this.registrationNumber,
     required this.email,
@@ -25,7 +25,7 @@ class Doctor {
       'firstName': firstName,
       'lastName': lastName,
       'phone': phoneNumber,
-      'instituteName': instituteName,
+      'hospitalName': hospitalName,
       'qualificationLevel': qualificationLevel,
       'registrationNumber': registrationNumber,
       'email': email,

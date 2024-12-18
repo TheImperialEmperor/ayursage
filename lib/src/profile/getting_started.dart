@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 import '../authentication/controllers/getting_started_controller.dart';
+import '../utils/form_validation.dart';
 
 // State management using Riverpod
 final selectedGroupProvider = StateProvider<String>((ref) => '');
@@ -88,37 +89,6 @@ class GettingStartedScreen extends ConsumerWidget {
               Visibility(
                 visible: showDetails,
                 child: buildDetailsForm(selectedGroup),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: selectedGroup.isNotEmpty ? () {
-                  if (selectedGroup == 'Doctor') {
-                    gettingStartedController.uploadDetailsToFirebase(0);
-                  } else if (selectedGroup == 'Student') {
-                    gettingStartedController.uploadDetailsToFirebase(1);
-                  } else if (selectedGroup == 'Guest') {
-                    gettingStartedController.uploadDetailsToFirebase(2);
-                  }
-                } : null, // Disable button if no card is selected
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: selectedGroup.isNotEmpty ? Colors.lightGreen : Colors.grey, // Change color based on selection
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: 20,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: const Text(
-                  'Proceed',
-                  style: TextStyle(
-                    fontFamily: 'red_hat',
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
               ),
             ],
           ),
@@ -240,116 +210,181 @@ class DoctorDetailsForm extends StatefulWidget {
 }
 
 class _DoctorDetailsFormState extends State<DoctorDetailsForm> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _registrationNumberController = TextEditingController();
-  final TextEditingController _instituteNameController = TextEditingController();
+  final GettingStartedController _controller = Get.find();
+  final _formKey = GlobalKey<FormState>();
 
-  String _selectedQualification = 'Select Qualification';
+  // Qualification options
+  final List<String> _qualificationOptions = [
+    'Select Qualification',
+    'MBBS',
+    'MD',
+    'DO',
+    'Other'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers from the main controller
+    _controller.firstNameController.clear();
+    _controller.lastNameController.clear();
+    _controller.phoneController.clear();
+    _controller.registrationNumberController.clear();
+    _controller.instituteNameController.clear();
+    _controller.qualificationLevelController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // First Name
-        TextFormField(
-          controller: _firstNameController,
-          decoration: const InputDecoration(
-            labelText: 'First Name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Column(
+        children: [
+          // First Name Field
+          TextFormField(
+            controller: _controller.firstNameController,
+            decoration: InputDecoration(
+              labelText: 'First Name',
+              prefixIcon: Icon(Icons.person),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validateName,
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Last Name
-        TextFormField(
-          controller: _lastNameController,
-          decoration: const InputDecoration(
-            labelText: 'Last Name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Last Name Field
+          TextFormField(
+            controller: _controller.lastNameController,
+            decoration: InputDecoration(
+              labelText: 'Last Name',
+              prefixIcon: Icon(Icons.person),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validateName,
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Phone Number
-        TextFormField(
-          controller: _phoneNumberController,
-          decoration: const InputDecoration(
-            labelText: 'Phone Number',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Phone Number Field
+          TextFormField(
+            controller: _controller.phoneController,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              labelText: 'Phone Number',
+              prefixIcon: Icon(Icons.phone),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validatePhoneNumber,
           ),
-          keyboardType: TextInputType.phone,
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Registration Number
-        TextFormField(
-          controller: _registrationNumberController,
-          decoration: const InputDecoration(
-            labelText: 'Registration Number',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Registration Number Field
+          TextFormField(
+            controller: _controller.registrationNumberController,
+            decoration: InputDecoration(
+              labelText: 'Registration Number',
+              prefixIcon: Icon(Icons.medical_services),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validateRegistrationNumber,
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Institute Name
-        TextFormField(
-          controller: _instituteNameController,
-          decoration: const InputDecoration(
-            labelText: 'Institution Name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Institute Name Field
+          TextFormField(
+            controller: _controller.instituteNameController,
+            decoration: InputDecoration(
+              labelText: 'Institution Name',
+              prefixIcon: Icon(Icons.school),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Institution name cannot be empty';
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Qualification Dropdown
-        DropdownButtonFormField<String>(
-          value: _selectedQualification,
-          items: const [
-            DropdownMenuItem(value: 'Select Qualification', child: Text('Select Qualification')),
-            DropdownMenuItem(value: 'MBBS', child: Text('MBBS')),
-            DropdownMenuItem(value: 'MD', child: Text('MD')),
-            DropdownMenuItem(value: 'DO', child: Text('DO')),
-            DropdownMenuItem(value: 'Other', child: Text('Other')),
-          ],
-          onChanged: (value) {
-            setState(() {
-              _selectedQualification = value!;
-            });
-          },
-          decoration: const InputDecoration(
-            labelText: 'Qualification',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Qualification Dropdown
+          DropdownButtonFormField<String>(
+            value: _controller.qualificationLevelController.text.isEmpty
+                ? 'Select Qualification'
+                : _controller.qualificationLevelController.text,
+            decoration: InputDecoration(
+              labelText: 'Qualification',
+              prefixIcon: Icon(Icons.school_outlined),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            items: _qualificationOptions.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            validator: FormValidator.validateDropdown,
+            onChanged: (value) {
+              setState(() {
+                _controller.qualificationLevelController.text = value!;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Optional: Submit Button (if needed separately)
+          ElevatedButton(
+            onPressed: _validateAndSubmit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.lightGreen,
+              padding: const EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 20,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            child: const Text(
+              'Proceed',
+              style: TextStyle(
+                fontFamily: 'red_hat',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-      ],
+        ],
+      ),
     );
+  }
+
+  void _validateAndSubmit() {
+    if (_formKey.currentState!.validate()) {
+      // Perform submission logic
+      _controller.uploadDetailsToFirebase(0); // 0 represents Doctor
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please correct the errors in the form'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
 
@@ -362,116 +397,186 @@ class StudentDetailsForm extends StatefulWidget {
 }
 
 class _StudentDetailsFormState extends State<StudentDetailsForm> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _collegeIdController = TextEditingController();
-  final TextEditingController _collegeNameController = TextEditingController();
+  final GettingStartedController _controller = Get.find();
+  final _formKey = GlobalKey<FormState>();
 
-  String _selectedPursuing = 'Select Program';
+  // Pursuing options
+  final List<String> _pursuingOptions = [
+    'Select Program',
+    'Undergraduate',
+    'Postgraduate',
+    'Diploma',
+    'Other',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers from the main controller
+    _controller.firstNameController.clear();
+    _controller.lastNameController.clear();
+    _controller.phoneController.clear();
+    _controller.collegeIdController.clear();
+    _controller.instituteNameController.clear();
+    _controller.degreeController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // First Name
-        TextFormField(
-          controller: _firstNameController,
-          decoration: const InputDecoration(
-            labelText: 'First Name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Column(
+        children: [
+          // First Name Field
+          TextFormField(
+            controller: _controller.firstNameController,
+            decoration: InputDecoration(
+              labelText: 'First Name',
+              prefixIcon: Icon(Icons.person),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validateName,
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Last Name
-        TextFormField(
-          controller: _lastNameController,
-          decoration: const InputDecoration(
-            labelText: 'Last Name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Last Name Field
+          TextFormField(
+            controller: _controller.lastNameController,
+            decoration: InputDecoration(
+              labelText: 'Last Name',
+              prefixIcon: Icon(Icons.person),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validateName,
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Phone Number
-        TextFormField(
-          controller: _phoneNumberController,
-          decoration: const InputDecoration(
-            labelText: 'Phone Number',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Phone Number Field
+          TextFormField(
+            controller: _controller.phoneController,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              labelText: 'Phone Number',
+              prefixIcon: Icon(Icons.phone),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validatePhoneNumber,
           ),
-          keyboardType: TextInputType.phone,
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // College ID
-        TextFormField(
-          controller: _collegeIdController,
-          decoration: const InputDecoration(
-            labelText: 'College ID',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // College ID Field
+          TextFormField(
+            controller: _controller.collegeIdController,
+            decoration: InputDecoration(
+              labelText: 'College ID',
+              prefixIcon: Icon(Icons.badge),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'College ID cannot be empty';
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // College Name
-        TextFormField(
-          controller: _collegeNameController,
-          decoration: const InputDecoration(
-            labelText: 'College Name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // College Name Field
+          TextFormField(
+            controller: _controller.instituteNameController,
+            decoration: InputDecoration(
+              labelText: 'College Name',
+              prefixIcon: Icon(Icons.school),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'College Name cannot be empty';
+              }
+              return null;
+            },
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Pursuing Dropdown
-        DropdownButtonFormField<String>(
-          value: _selectedPursuing,
-          items: const [
-            DropdownMenuItem(value: 'Select Program', child: Text('Select Program')),
-            DropdownMenuItem(value: '', child: Text('Undergraduate')),
-            DropdownMenuItem(value: 'Postgraduate', child: Text('Postgraduate')),
-            DropdownMenuItem(value: 'Diploma', child: Text('Diploma')),
-            DropdownMenuItem(value: 'Other', child: Text('Other')),
-          ],
-          onChanged: (value) {
-            setState(() {
-              _selectedPursuing = value!;
-            });
-          },
-          decoration: const InputDecoration(
-            labelText: 'Pursuing',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Pursuing Dropdown
+          DropdownButtonFormField<String>(
+            value: _controller.degreeController.text.isEmpty
+                ? 'Select Program'
+                : _controller.degreeController.text,
+            decoration: InputDecoration(
+              labelText: 'Pursuing',
+              prefixIcon: Icon(Icons.book),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            items: _pursuingOptions.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            validator: FormValidator.validateDropdown,
+            onChanged: (value) {
+              setState(() {
+                _controller.degreeController.text = value!;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Optional: Submit Button (if needed separately)
+          ElevatedButton(
+            onPressed: _validateAndSubmit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.lightGreen,
+              padding: const EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 20,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            child: const Text(
+              'Proceed',
+              style: TextStyle(
+                fontFamily: 'red_hat',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-      ],
+        ],
+      ),
     );
+  }
+
+  void _validateAndSubmit() {
+    if (_formKey.currentState!.validate()) {
+      // Perform submission logic
+      _controller.uploadDetailsToFirebase(1); // 1 represents Student
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please correct the errors in the form'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
 
@@ -484,162 +589,231 @@ class PatientDetailsForm extends StatefulWidget {
 }
 
 class _PatientDetailsFormState extends State<PatientDetailsForm> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _aadhaarController = TextEditingController();
+  final GettingStartedController _controller = Get.find();
+  final _formKey = GlobalKey<FormState>();
 
-  String _selectedBloodGroup = 'Select Blood Group';
-  String _selectedGender = 'Select Gender';
-  final TextEditingController _dateOfBirthController = TextEditingController();
+  // Blood Group Options
+  final List<String> _bloodGroupOptions = [
+    'Select Blood Group',
+    'A+',
+    'A-',
+    'B+',
+    'B-',
+    'O+',
+    'O-',
+    'AB+',
+    'AB-',
+  ];
+
+  // Gender Options
+  final List<String> _genderOptions = [
+    'Select Gender',
+    'Male',
+    'Female',
+    'Other',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize controllers from the main controller
+    _controller.firstNameController.clear();
+    _controller.lastNameController.clear();
+    _controller.phoneController.clear();
+    _controller.aadhaarNumberController.clear();
+    _controller.dateOfBirthController.clear();
+    _controller.bloodGroupController.clear();
+    _controller.genderController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // First Name
-        TextFormField(
-          controller: _firstNameController,
-          decoration: const InputDecoration(
-            labelText: 'First Name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return Form(
+      key: _formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: Column(
+        children: [
+          // First Name Field
+          TextFormField(
+            controller: _controller.firstNameController,
+            decoration: InputDecoration(
+              labelText: 'First Name',
+              prefixIcon: Icon(Icons.person),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validateName,
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Last Name
-        TextFormField(
-          controller: _lastNameController,
-          decoration: const InputDecoration(
-            labelText: 'Last Name',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Last Name Field
+          TextFormField(
+            controller: _controller.lastNameController,
+            decoration: InputDecoration(
+              labelText: 'Last Name',
+              prefixIcon: Icon(Icons.person),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validateName,
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Phone Number
-        TextFormField(
-          controller: _phoneNumberController,
-          decoration: const InputDecoration(
-            labelText: 'Phone Number',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Phone Number Field
+          TextFormField(
+            controller: _controller.phoneController,
+            keyboardType: TextInputType.phone,
+            decoration: InputDecoration(
+              labelText: 'Phone Number',
+              prefixIcon: Icon(Icons.phone),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validatePhoneNumber,
           ),
-          keyboardType: TextInputType.phone,
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Aadhaar Number
-        TextFormField(
-          controller: _aadhaarController,
-          decoration: const InputDecoration(
-            labelText: 'Aadhaar Number',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Aadhaar Number Field
+          TextFormField(
+            controller: _controller.aadhaarNumberController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: 'Aadhaar Number',
+              prefixIcon: Icon(Icons.assignment_ind),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
+            validator: FormValidator.validateAadhaarNumber,
           ),
-        ),
-        const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
-        // Date of Birth with DatePicker
-        TextFormField(
-          controller: _dateOfBirthController,
-          readOnly: true,
-          decoration: const InputDecoration(
-            labelText: 'Date of Birth',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Date of Birth Field
+          TextFormField(
+            controller: _controller.dateOfBirthController,
+            readOnly: true,
+            decoration: InputDecoration(
+              labelText: 'Date of Birth',
+              prefixIcon: Icon(Icons.calendar_today),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-            suffixIcon: Icon(Icons.calendar_today),
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+              );
+              if (pickedDate != null) {
+                setState(() {
+                  _controller.dateOfBirthController.text =
+                  "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                });
+              }
+            },
           ),
-          onTap: () async {
-            DateTime? pickedDate = await showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now(),
-            );
-            if (pickedDate != null) {
+          const SizedBox(height: 16),
+
+          // Blood Group Dropdown
+          DropdownButtonFormField<String>(
+            value: _controller.bloodGroupController.text.isEmpty
+                ? 'Select Blood Group'
+                : _controller.bloodGroupController.text,
+            decoration: InputDecoration(
+              labelText: 'Blood Group',
+              prefixIcon: Icon(Icons.bloodtype),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            items: _bloodGroupOptions.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            validator: FormValidator.validateDropdown,
+            onChanged: (value) {
               setState(() {
-                _dateOfBirthController.text =
-                "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                _controller.bloodGroupController.text = value!;
               });
-            }
-          },
-        ),
-        const SizedBox(height: 20),
+            },
+          ),
+          const SizedBox(height: 16),
 
-        // Blood Group Dropdown
-        DropdownButtonFormField<String>(
-          value: _selectedBloodGroup,
-          items: const [
-            DropdownMenuItem(value: 'Select Blood Group', child: Text('Select Blood Group')),
-            DropdownMenuItem(value: 'A+', child: Text('A+')),
-            DropdownMenuItem(value: 'A-', child: Text('A-')),
-            DropdownMenuItem(value: 'B+', child: Text('B+')),
-            DropdownMenuItem(value: 'B-', child: Text('B-')),
-            DropdownMenuItem(value: 'O+', child: Text('O+')),
-            DropdownMenuItem(value: 'O-', child: Text('O-')),
-            DropdownMenuItem(value: 'AB+', child: Text('AB+')),
-            DropdownMenuItem(value: 'AB-', child: Text('AB-')),
-          ],
-          onChanged: (value) {
-            setState(() {
-              _selectedBloodGroup = value!;
-            });
-          },
-          decoration: const InputDecoration(
-            labelText: 'Blood Group',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          // Gender Dropdown
+          DropdownButtonFormField<String>(
+            value: _controller.genderController.text.isEmpty
+                ? 'Select Gender'
+                : _controller.genderController.text,
+            decoration: InputDecoration(
+              labelText: 'Gender',
+              prefixIcon: Icon(Icons.wc),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            items: _genderOptions.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            validator: FormValidator.validateDropdown,
+            onChanged: (value) {
+              setState(() {
+                _controller.genderController.text = value!;
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+
+          // Optional: Submit Button (if needed separately)
+          ElevatedButton(
+            onPressed: _validateAndSubmit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.lightGreen,
+              padding: const EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 20,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+            ),
+            child: const Text(
+              'Proceed',
+              style: TextStyle(
+                fontFamily: 'red_hat',
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-
-        // Gender Dropdown
-        DropdownButtonFormField<String>(
-          value: _selectedGender,
-          items: const [
-            DropdownMenuItem(value: 'Select Gender', child: Text('Select Gender')),
-            DropdownMenuItem(value: 'Male', child: Text('Male')),
-            DropdownMenuItem(value: 'Female', child: Text('Female')),
-            DropdownMenuItem(value: 'Other', child: Text('Other')),
-          ],
-          onChanged: (value) {
-            setState(() {
-              _selectedGender = value!;
-            });
-          },
-          decoration: const InputDecoration(
-            labelText: 'Gender',
-            labelStyle: TextStyle(
-              fontFamily: 'red_hat',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 20),
-      ],
+        ],
+      ),
     );
+  }
+
+  void _validateAndSubmit() {
+    if (_formKey.currentState!.validate()) {
+      // Perform submission logic
+      _controller.uploadDetailsToFirebase(2); // 2 represents Patient
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please correct the errors in the form'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
 

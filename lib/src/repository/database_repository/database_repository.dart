@@ -39,7 +39,7 @@ class DatabaseRepository extends GetxController {
         'firstName': doctor.firstName,
         'lastName': doctor.lastName,
         'phoneNumber': doctor.phoneNumber,
-        'instituteName': doctor.instituteName,
+        'hospitalName': doctor.hospitalName,
         'qualificationLevel': doctor.qualificationLevel,
         'registrationNumber': doctor.registrationNumber,
       });
@@ -77,7 +77,7 @@ class DatabaseRepository extends GetxController {
         'firstName': patient.firstName,
         'lastName': patient.lastName,
         'phoneNumber': patient.phoneNumber,
-        'aadharNumber': patient.aadharNumber,
+        'aadhaarNumber': patient.aadhaarNumber,
         'bloodGroup': patient.bloodGroup,
         'dob': patient.dateOfBirth,
         'gender': patient.gender,

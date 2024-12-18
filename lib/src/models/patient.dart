@@ -3,7 +3,7 @@ class Patient {
   final String firstName;
   final String lastName;
   final String phoneNumber;
-  final String aadharNumber;
+  final String aadhaarNumber;
   final String bloodGroup;
   final String dateOfBirth;
   final String gender;
@@ -13,7 +13,7 @@ class Patient {
     required this.firstName,
     required this.lastName,
     required this.phoneNumber,
-    required this.aadharNumber,
+    required this.aadhaarNumber,
     required this.bloodGroup,
     required this.dateOfBirth,
     required this.gender,
@@ -26,7 +26,7 @@ class Patient {
       'firstName': firstName,
       'lastName': lastName,
       'phone': phoneNumber,
-      'aadharNumber': aadharNumber,
+      'aadhaarNumber': aadhaarNumber,
       'bloodGroup': bloodGroup,
       'dateOfBirth': dateOfBirth,
       'gender': gender,
