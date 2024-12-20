@@ -1,9 +1,13 @@
 import 'package:ayursage/src/authentication/screens/signup.dart';
 import 'package:ayursage/src/home_screens/guest_home.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../home.dart';
 import '../../utils/constants.dart';
+import '../../utils/handle_login.dart';
+import '../controllers/login_controller.dart';
 import 'otp.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,8 +18,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  /*final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();*/
   bool isPasswordVisible = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -31,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(LoginController());
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -71,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 25),
                 TextFormField(
-                  controller: emailController,
+                  controller: controller.email,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'Email',
@@ -92,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 15),
                 TextFormField(
-                  controller: passwordController,
+                  controller: controller.password,
                   obscureText: !isPasswordVisible,
                   decoration: InputDecoration(
                     hintText: 'Password',
@@ -262,12 +267,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Implement login logic
-                      Navigator.pushReplacement(
+                      print(controller.email.text);
+                      LoginController.instance.loginUser(controller.email.text.trim(), controller.password.text.trim());
+                      /*await _saveCredentials(
+                      controller.email.text.trim(),
+                      controller.password.text.trim(),
+                      );*/
+                      handleLogin(controller.email.text.trim());
+                      /*Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const HomeScreen()),
-                      );
+                            builder: (context) => HomeScreen()),
+                      );*/
                     }
                   },
                   style: ElevatedButton.styleFrom(

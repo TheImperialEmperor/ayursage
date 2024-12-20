@@ -34,7 +34,8 @@ class DatabaseRepository extends GetxController {
     try {
       await FirebaseFirestore.instance
           .collection('doctors')
-          .doc(doctor.email) // Assuming doctor has an ID field, otherwise use FirebaseAuth User ID
+          .doc(doctor
+              .email) // Assuming doctor has an ID field, otherwise use FirebaseAuth User ID
           .set({
         'firstName': doctor.firstName,
         'lastName': doctor.lastName,
@@ -43,6 +44,10 @@ class DatabaseRepository extends GetxController {
         'qualificationLevel': doctor.qualificationLevel,
         'registrationNumber': doctor.registrationNumber,
       });
+      await FirebaseFirestore.instance
+          .collection('UserType')
+          .doc(doctor.email)
+          .set({'userType': 0});
       print("Doctor details uploaded successfully");
     } catch (e) {
       print("Failed to upload doctor details: $e");
@@ -62,6 +67,10 @@ class DatabaseRepository extends GetxController {
         'collegeID': student.collegeId,
         'degree': student.degree,
       });
+      await FirebaseFirestore.instance
+          .collection('UserType')
+          .doc(student.email)
+          .set({'userType': 1});
       print("Student details uploaded successfully");
     } catch (e) {
       print("Failed to upload student details: $e");
@@ -82,10 +91,13 @@ class DatabaseRepository extends GetxController {
         'dob': patient.dateOfBirth,
         'gender': patient.gender,
       });
+      await FirebaseFirestore.instance
+          .collection('UserType')
+          .doc(patient.email)
+          .set({'userType': 2});
       print("Patient details uploaded successfully");
     } catch (e) {
       print("Failed to upload patient details: $e");
     }
   }
-
 }
