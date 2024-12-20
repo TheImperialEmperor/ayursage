@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../repository/database_repository/database_repository.dart';
+import '../screens/login.dart';
 
 class GettingStartedController extends GetxController {
   static GettingStartedController get instance => Get.find();
@@ -51,7 +52,7 @@ class GettingStartedController extends GetxController {
   // Method to upload based on the user type
   void uploadDetailsToFirebase(value) async {
     try {
-      if (userType.value == -1) {
+      if (value == -1) {
         Get.snackbar('Error', 'Please select a user type');
         return;
       }
@@ -104,6 +105,7 @@ class GettingStartedController extends GetxController {
       await DatabaseRepository.instance.uploadDoctorDetails(doctor);
 
       Get.snackbar('Success', 'Doctor details uploaded successfully');
+      Get.offAll(() => const LoginScreen());
     } catch (e) {
       Get.snackbar('Error', 'Failed to upload doctor details: $e');
     }
@@ -134,6 +136,7 @@ class GettingStartedController extends GetxController {
       await DatabaseRepository.instance.uploadStudentDetails(student);
 
       Get.snackbar('Success', 'Student details uploaded successfully');
+      Get.offAll(() => const LoginScreen());
     } catch (e) {
       Get.snackbar('Error', 'Failed to upload student details: $e');
     }
@@ -165,6 +168,7 @@ class GettingStartedController extends GetxController {
       await DatabaseRepository.instance.uploadPatientDetails(patient);
 
       Get.snackbar('Success', 'Patient details uploaded successfully');
+      Get.offAll(() => const LoginScreen());
     } catch (e) {
       Get.snackbar('Error', 'Failed to upload patient details: $e');
     }

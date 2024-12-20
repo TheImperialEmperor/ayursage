@@ -1,17 +1,18 @@
 import 'package:ayursage/firebase_options.dart';
 import 'package:ayursage/src/authentication/screens/login.dart';
-import 'package:ayursage/src/profile/getting_started.dart';
 import 'package:ayursage/src/repository/auth_repository/authentication_repository.dart';
-import 'package:ayursage/src/utils//splash_screen.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Add this
+import 'package:ayursage/src/repository/database_repository/database_repository.dart'; // Import DatabaseRepository
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
-      .then((value) => Get.put(AuthenticationRepository()));
+  Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((value) {
+    Get.put(AuthenticationRepository());
+    Get.put(DatabaseRepository()); // Initialize DatabaseRepository
+  });
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'AyurSage',
       theme: ThemeData(
@@ -28,8 +29,6 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      //darkTheme: ThemeData(brightness: Brightness.dark),
-      //themeMode: ThemeMode.system,
       home: const LoginScreen(),
     );
   }

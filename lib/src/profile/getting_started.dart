@@ -300,7 +300,7 @@ class _DoctorDetailsFormState extends State<DoctorDetailsForm> {
 
           // Institute Name Field
           TextFormField(
-            controller: _controller.instituteNameController,
+            controller: _controller.hospitalNameController,
             decoration: InputDecoration(
               labelText: 'Institution Name',
               prefixIcon: Icon(Icons.school),
@@ -379,7 +379,7 @@ class _DoctorDetailsFormState extends State<DoctorDetailsForm> {
     } else {
       // Show error message
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please correct the errors in the form'),
           backgroundColor: Colors.red,
         ),
