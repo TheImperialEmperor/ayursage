@@ -1,5 +1,5 @@
 import 'package:ayursage/src/authentication/screens/signup.dart';
-import 'package:ayursage/src/home_screens/guest_home.dart';
+import 'package:ayursage/src/guest/screens/guest_home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
