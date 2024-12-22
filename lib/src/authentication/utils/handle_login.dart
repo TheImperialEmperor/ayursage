@@ -1,12 +1,11 @@
-
-
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../widgets/bottom_menus/doctor_menu.dart';
-import '../widgets/bottom_menus/patient_menu.dart';
-import '../widgets/bottom_menus/student_menu.dart';
-import 'firestore_service.dart';
+import '../../repository/database_repository/firestore_service.dart';
+import '../../widgets/bottom_menus/doctor_menu.dart';
+import '../../widgets/bottom_menus/patient_menu.dart';
+import '../../widgets/bottom_menus/student_menu.dart';
+
 
 void handleLogin(String email) async {
   try {
@@ -15,6 +14,11 @@ void handleLogin(String email) async {
       Get.snackbar('Error', 'User type not found. Please contact support.');
       return;
     }
+
+    // Save email and user type to SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_email', email);
+    await prefs.setInt('user_type', userType);
 
     // Redirect based on userType
     switch (userType) {

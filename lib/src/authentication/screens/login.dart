@@ -2,11 +2,8 @@ import 'package:ayursage/src/authentication/screens/signup.dart';
 import 'package:ayursage/src/guest/screens/guest_home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-
-import '../../home.dart';
 import '../../utils/constants.dart';
-import '../../utils/handle_login.dart';
+import '../utils/handle_login.dart';
 import '../controllers/login_controller.dart';
 import 'otp.dart';
 
@@ -136,7 +133,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         showModalBottomSheet(
                           context: context,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
                           builder: (context) => Container(
                             padding: const EdgeInsets.all(30.0),
                             child: Column(
@@ -161,7 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const SizedBox(height: 30.0),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context); // Close the bottom sheet
+                                    Navigator.pop(
+                                        context); // Close the bottom sheet
                                     _showOTPScreen();
                                   },
                                   child: Container(
@@ -180,7 +179,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           width: 10.0,
                                         ),
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text('E-Mail',
                                                 style: TextStyle(
@@ -205,7 +205,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 const SizedBox(height: 20),
                                 GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context); // Close the bottom sheet
+                                    Navigator.pop(
+                                        context); // Close the bottom sheet
                                     _showOTPScreen();
                                   },
                                   child: Container(
@@ -224,7 +225,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           width: 10.0,
                                         ),
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text('Phone',
                                                 style: TextStyle(
@@ -268,7 +270,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       print(controller.email.text);
-                      LoginController.instance.loginUser(controller.email.text.trim(), controller.password.text.trim());
+                      LoginController.instance.loginUser(
+                          controller.email.text.trim(),
+                          controller.password.text.trim());
                       /*await _saveCredentials(
                       controller.email.text.trim(),
                       controller.password.text.trim(),

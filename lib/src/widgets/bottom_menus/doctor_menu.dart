@@ -4,9 +4,10 @@ import 'package:ayursage/src/doctor/screens/profile.dart';
 import 'package:flutter/material.dart';
 
 import '../../doctor/screens/doctor_home.dart';
-import '../../home.dart';
 
 class DoctorNavMenu extends StatefulWidget {
+  const DoctorNavMenu({super.key});
+
   @override
   _DoctorNavMenuState createState() => _DoctorNavMenuState();
 }
@@ -16,10 +17,10 @@ class _DoctorNavMenuState extends State<DoctorNavMenu> {
 
   // List of screens to navigate to
   final List<Widget> _screens = [
-    DoctorHomeScreen(),
-    DoctorNetworkScreen(),
-    PatientNetworkScreen(),
-    DoctorProfileScreen(),
+    const DoctorHomeScreen(),
+    const DoctorNetworkScreen(),
+    const PatientNetworkScreen(),
+    const DoctorProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -39,7 +40,7 @@ class _DoctorNavMenuState extends State<DoctorNavMenu> {
             BoxShadow(
               color: Colors.black.withOpacity(0.1), // Light shadow
               blurRadius: 10,
-              offset: Offset(0, -2), // Shadow above the bar
+              offset: const Offset(0, -2), // Shadow above the bar
             ),
           ],
         ),
@@ -49,23 +50,27 @@ class _DoctorNavMenuState extends State<DoctorNavMenu> {
             topRight: Radius.circular(20.0),
           ),
           child: BottomNavigationBar(
-            backgroundColor: Colors.transparent, // No background
+            backgroundColor: Colors.transparent,
+            // No background
             currentIndex: _selectedIndex,
-            onTap: _onItemTapped, // Handle taps on items
-            selectedItemColor: Colors.lightGreen, // Selected icon/text color
-            unselectedItemColor: Colors.black, // Unselected icon/text color
+            onTap: _onItemTapped,
+            // Handle taps on items
+            selectedItemColor: Colors.lightGreen,
+            // Selected icon/text color
+            unselectedItemColor: Colors.black,
+            // Unselected icon/text color
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: "Home",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today),
-                label: "Appointments",
+                icon: Icon(Icons.person_pin_rounded),
+                label: "Network",
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person),
-                label: "Profile",
+                icon: Icon(Icons.document_scanner_rounded),
+                label: "Patients",
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
