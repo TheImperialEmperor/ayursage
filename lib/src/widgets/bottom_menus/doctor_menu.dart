@@ -4,6 +4,7 @@ import 'package:ayursage/src/doctor/screens/profile.dart';
 import 'package:flutter/material.dart';
 
 import '../../doctor/screens/doctor_home.dart';
+import '../../doctor/screens/show_all_doctors.dart';
 
 class DoctorNavMenu extends StatefulWidget {
   const DoctorNavMenu({super.key});
@@ -18,7 +19,7 @@ class _DoctorNavMenuState extends State<DoctorNavMenu> {
   // List of screens to navigate to
   final List<Widget> _screens = [
     const DoctorHomeScreen(),
-    const DoctorNetworkScreen(),
+    const DoctorListPage(),
     const PatientNetworkScreen(),
     const DoctorProfileScreen(),
   ];

@@ -15,10 +15,10 @@ class GettingStartedScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = Get.put(GettingStartedController());
+    Get.put(GettingStartedController());
     final selectedGroup = ref.watch(selectedGroupProvider);
     final showDetails = ref.watch(showDetailsProvider);
-    final gettingStartedController = Get.put(GettingStartedController());
+    Get.put(GettingStartedController());
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -137,9 +137,9 @@ class GettingStartedScreen extends ConsumerWidget {
   Widget buildDetailsForm(String selectedGroup) {
     switch (selectedGroup) {
       case 'Doctor':
-        return DoctorDetailsForm();
+        return const DoctorDetailsForm();
       case 'Student':
-        return StudentDetailsForm();
+        return const StudentDetailsForm();
       case 'Guest':
         return const PatientDetailsForm();
       default:

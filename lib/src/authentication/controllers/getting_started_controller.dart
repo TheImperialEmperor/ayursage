@@ -1,7 +1,7 @@
 import 'package:ayursage/src/models/doctor.dart';  // Import the respective models
 import 'package:ayursage/src/models/student.dart';
 import 'package:ayursage/src/models/patient.dart';
-import 'package:ayursage/src/repository/auth_repository/authentication_repository.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
